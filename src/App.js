@@ -254,15 +254,20 @@ class App extends Component {
   state = {
     activeTabId: tabsList[0].tabId,
     activeThumbNailImage: imagesList[0].imageUrl,
-    timer: 11,
+    timer: 60,
+    score: 0,
+    matchCard: false,
   }
 
   stopTimer = () => {
     clearInterval(this.timerId)
+    this.setState({matchCard: true})
   }
 
   changeActiveTab = id => {
+    // const image = imagesList.find(each => each.category === id)
     this.setState({activeTabId: id})
+    // console.log(image)
   }
 
   AppItems = () => {
@@ -271,13 +276,25 @@ class App extends Component {
   }
 
   thumbNailImageClicked = imageUrl => {
-    this.setState({activeThumbNailImage: imageUrl})
+    const {activeThumbNailImage} = this.state
+    const slicedImageList = imagesList.slice()
+    const image = slicedImageList.sort(() => (Math.random() - 0.5) * 10)
+
+    if (activeThumbNailImage === imageUrl) {
+      this.setState(pre => ({
+        activeThumbNailImage: image[0].imageUrl,
+        score: pre.score + 1,
+      }))
+    } else {
+      clearInterval(this.timerId)
+      this.setState({matchCard: true})
+    }
   }
 
   startTimer = () => {
     this.timerId = setInterval(() => {
       this.setState(pre => ({
-        timer: pre.timer === 1 ? this.stopTimer() : pre.timer - 1,
+        timer: pre.timer === 0 ? this.stopTimer() : pre.timer - 1,
       }))
     }, 1000)
   }
@@ -286,8 +303,24 @@ class App extends Component {
     this.startTimer()
   }
 
+  playAgain = () => {
+    this.setState({
+      activeTabId: tabsList[0].tabId,
+      activeThumbNailImage: imagesList[0].imageUrl,
+      timer: 60,
+      score: 0,
+      matchCard: false,
+    })
+  }
+
   render() {
-    const {activeTabId, activeThumbNailImage, timer} = this.state
+    const {
+      activeTabId,
+      activeThumbNailImage,
+      timer,
+      score,
+      matchCard,
+    } = this.state
     const getAppItems = this.AppItems()
     return (
       <div className="con">
@@ -300,7 +333,7 @@ class App extends Component {
             />
             <div className="head-right-con">
               <p>
-                Score:<span className="para">0</span>
+                Score:<span className="para">{score}</span>
               </p>
               <div className="head-right-sec-con">
                 <img
@@ -312,37 +345,67 @@ class App extends Component {
               </div>
             </div>
           </div>
-          <div className="match-image-con">
-            <img
-              src={activeThumbNailImage}
-              alt="match"
-              className="match-image"
-            />
-          </div>
-        </div>
-        <div className="ul-con">
-          <ul className="unordered-con">
-            {tabsList.map(each => (
-              <TabsList
-                isActive={each.tabId === activeTabId}
-                each={each}
-                key={each.tabId}
-                changeActiveTab={this.changeActiveTab}
-              />
-            ))}
-          </ul>
-        </div>
-        <div className="app-items-con">
-          <ul className="app-items-ul-con">
-            {getAppItems.map(each => (
-              <AppItems
-                thumbNailImageClicked={this.thumbNailImageClicked}
-                activeTabId={activeTabId}
-                each={each}
-                key={each.id}
-              />
-            ))}
-          </ul>
+          {matchCard ? (
+            <div className="match-inner-con">
+              <div className="match-card-con">
+                <div className="match-card">
+                  <img
+                    src="https://assets.ccbp.in/frontend/react-js/match-game-trophy.png"
+                    alt="trophy"
+                    className="trophy-image"
+                  />
+                  <p>Your Score {score}</p>
+                  <button
+                    onClick={this.playAgain}
+                    type="button"
+                    className="reset-button"
+                  >
+                    <img
+                      src="https://assets.ccbp.in/frontend/react-js/match-game-play-again-img.png"
+                      alt="reset"
+                      className="play-again"
+                    />
+                    Play Again
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="match-image-con">
+                <img
+                  src={activeThumbNailImage}
+                  alt="match"
+                  className="match-image"
+                />
+              </div>
+
+              <div className="ul-con">
+                <ul className="unordered-con">
+                  {tabsList.map(each => (
+                    <TabsList
+                      isActive={each.tabId === activeTabId}
+                      each={each}
+                      key={each.tabId}
+                      changeActiveTab={this.changeActiveTab}
+                    />
+                  ))}
+                </ul>
+              </div>
+              <div className="app-items-con">
+                <ul className="app-items-ul-con">
+                  {getAppItems.map(each => (
+                    <AppItems
+                      thumbNailImageClicked={this.thumbNailImageClicked}
+                      activeTabId={activeTabId}
+                      each={each}
+                      key={each.id}
+                    />
+                  ))}
+                </ul>
+              </div>
+            </>
+          )}
         </div>
       </div>
     )
