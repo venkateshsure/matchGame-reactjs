@@ -1,0 +1,22 @@
+.tab-list-con {
+  list-style-type: none;
+  font-size: 10px;
+  font-family: 'Roboto';
+}
+
+.tab-button {
+  color: #ffffff;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.active-tab-button {
+  color: #fec653;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  text-decoration: underline;
+}

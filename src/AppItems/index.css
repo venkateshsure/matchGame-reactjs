@@ -1,0 +1,15 @@
+.thumb-nail-list {
+  list-style-type: none;
+  width: 20%;
+  margin: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.thumb-nail-image {
+  width: 140px;
+  height: 140px;
+}
